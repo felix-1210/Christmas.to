@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Christmas Greeting</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+</head>
+<body>
+  <header>
+    <h1>Welcome to Christmas Cheer!</h1>
+    <p id="greeting-instructions">Enter your name to receive a personalized greeting</p>
+  </header>
+  <main>
+    <form id="name-form">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" name="name" required>
+      <button type="submit">Submit</button>
+    </form>
+    <section id="greeting-section" style="display: none;">
+      <h2 id="personalized-message" aria-live="polite"></h2>
+      <div class="tree-container">
+        <img style="height: 400px; width: 300px;" src="/img/christmas_tree.jpg" alt="Christmas Tree" id="christmas-tree" loading="lazy">
+        <img src="/img/star.png" alt="Star" id="star" style="display: none;" loading="lazy">
+      </div>
+      <div id="countdown" style="margin-top: 20px; font-size: 1.5rem;" aria-live="polite"></div>
+    </section>
+    <button id="toggle-theme" style="color: #fff"><i class="icon ion-ios-snowy"></i> Snowy Theme</button>
+  </main>
+  <footer>
+<footer>
+  <p>© 2024 Christmas Cheer. All rights reserved.</p>
+</footer>
+
+    <div class="social-links">
+     <p style="text-align: center; color: white; font-family: cursive;">Wishing you a Merry Christmas and a Happy New Year!</p>
+    </div>
+  </footer>
+  <audio id="background-music" loop muted> <source src="/music/christmas-music.mp3" type="audio/mp3"> Your browser does not support the audio element. </audio> 
+  <script>
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    makeStarBlink();
+
+  // Check if the name is already stored in localStorage
+  const music = document.getElementById('background-music'); 
+  
+   function startMusic() { 
+     music.muted = false; 
+     music.play().catch((error) => { console.error('Error playing music:', error);  }); }
+  const storedName = localStorage.getItem('name');
+  if (storedName) {
+    // If a name is stored, show the personalized message and hide the form
+    const message = `Merry Christmas, ${storedName}! 🎄🎅`;
+    document.getElementById('personalized-message').innerText = message;
+    document.getElementById('greeting-section').style.display = 'block';
+    document.getElementById('name-form').style.display = 'none';
+
+    // Trigger Confetti
+    triggerConfetti();
+    createSnowflakes();
+    startMusic();
+    revealChristmasGift();
+    checkChristmasDay();
+  }
+
+  // Handle the form submission
+  document.getElementById('name-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const name = document.getElementById('name').value;
+    
+    // Store the name in localStorage
+    localStorage.setItem('name', name);
+
+
+   
+    // Display the personalized message and hide the form
+    const message = `Merry Christmas, ${name}! 🎄🎅`;
+    document.getElementById('personalized-message').innerText = message;
+    document.getElementById('greeting-section').style.display = 'block';
+    document.getElementById('name-form').style.display = 'none';
+
+    // Trigger Confetti
+    triggerConfetti();
+    createSnowflakes();
+    startCountdown();
+    startMusic();
+    revealChristmasGift();
+  });
+  
+  
+  // Snowflakes
+  function createSnowflakes() {
+    const snowflakeCount = 50;
+    for (let i = 0; i < snowflakeCount; i++) {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      snowflake.innerHTML = '❄';
+      document.body.appendChild(snowflake);
+
+      // Set random position and animation duration for each snowflake
+      snowflake.style.left = `${Math.random() * 100}vw`;
+      snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+      snowflake.style.animationDelay = `${Math.random() * 3}s`;
+    }
+  }
+
+  // Confetti Effect
+  function triggerConfetti() {
+    for (let i = 0; i < 30; i++) {
+      createConfetti();
+    }
+  }
+
+  function createConfetti() {
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    document.body.appendChild(confetti);
+
+    // Set random left position and animation delay
+    confetti.style.left = `${Math.random() * 100}vw`;
+    confetti.style.animationDelay = `${Math.random() * 2}s`;
+
+    // Remove confetti after animation
+    setTimeout(() => {
+      confetti.remove();
+    }, 2000);
+  }
+
+  // Countdown to Christmas
+  function startCountdown() {
+    const countdownElement = document.getElementById('countdown');
+    setInterval(function() {
+      const christmas = new Date('2024-12-25');
+      const now = new Date();
+      const timeLeft = christmas - now;
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+      countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s until Christmas!`;
+    }, 1000);
+  }
+  // if christmas is reached
+   function checkChristmasDay() { 
+    const now = new Date(); 
+    const isChristmas = now.getMonth() === 11 && now.getDate() === 25; 
+
+    if (isChristmas) { 
+        // Prevent duplicate message creation
+        if (!document.getElementById('special-message')) {
+            const specialMessage = document.createElement('div'); 
+            specialMessage.id = 'special-message'; 
+            specialMessage.innerHTML = ` 
+                <h1>🎄 Merry Christmas! 🎅</h1> 
+                <p>Wishing you joy, love, and cheer on this magical day!</p> 
+            `; 
+            specialMessage.style.cssText = ` 
+                position: fixed; 
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%); 
+                background: #fff; 
+                padding: 20px; 
+                border-radius: 10px; 
+                text-align: center; 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+                z-index: 1000; 
+                animation: fade-in 1.5s ease-in-out; 
+            `; 
+
+            document.body.appendChild(specialMessage); 
+        } 
+    } 
+}
+
+// Call the function on page load
+document.addEventListener('DOMContentLoaded', checkChristmasDay);
+
+   //change bckg when xmas is reached
+    function changeBackgroundForChristmas() { const now = new Date(); const isChristmas = now.getMonth() === 11 && now.getDate() === 25; if (isChristmas) { document.body.style.backgroundImage = "url('/img/christmas-background.jpg')"; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundRepeat = 'no-repeat'; document.body.style.backgroundAttachment = 'fixed'; } } 
+    
+    // Reveal Gift on Christmas Day
+    
+    function revealChristmasGift() {
+      const now = new Date(); const isChristmas = now.getMonth() === 11 && now.getDate() === 25; 
+      if (!isChristmas) return; // Exit if it's not Christmas Day 
+    setTimeout(() => {
+        const gift = document.createElement('div');
+        gift.id = 'christmas-gift';
+        gift.innerHTML = `
+            <img src="/img/gift-box.png" alt="Gift" id="gift-box" style="width: 150px; cursor: pointer;">
+            <p id="gift-text">Click the gift to open your surprise!</p>
+        `;
+        gift.style.cssText = `
+            position: fixed;
+            top: -200px; /* Starts outside the screen */
+            left: 50%;
+            pointer: none;
+            color: red;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 1000;
+        `;
+        document.body.appendChild(gift);
+
+        // Animate the gift popping in
+        gift.style.transition = 'top 1s ease';
+        gift.style.top = '20px'; // Moves the gift into view
+
+        const giftBox = document.getElementById('gift-box');
+        const giftText = document.getElementById('gift-text');
+
+        giftBox.addEventListener('click', () => {
+            // Add "burst" animation
+            giftBox.classList.add('burst-gift');
+            setTimeout(() => {
+                // Replace with opened gift image and add animation
+                giftBox.src = '/img/opened-gift.png';
+                giftBox.classList.remove('burst-gift');
+                giftBox.classList.add('animate-opened-gift');
+
+                // Change the text
+                giftText.textContent = '🎉 Surprise! Enjoy your special Christmas greeting!';
+                giftText.style.color = 'red'; // Text turns red
+
+                // Remove the gift box after some time
+                setTimeout(() => {
+                    gift.remove();
+                }, 5000);
+            }, 2000); // Wait for the burst animation
+        });
+    }, 1000); // 1-second delay for testing
+}
+
+function makeStarBlink() {
+    const star = document.getElementById('star');
+    if (!star) return;
+
+    let isVisible = false;
+    setInterval(() => {
+        isVisible = !isVisible;
+        star.style.display = isVisible ? 'block' : 'none';
+    }, 50); // 50 milliseconds for each toggle
+}
+
+
+
+  // Theme Toggle
+  document.getElementById('toggle-theme').addEventListener('click', function() {
+    document.body.classList.toggle('snowy-theme');
+  });
+});
+
+</script>
+</body>
+</html>
